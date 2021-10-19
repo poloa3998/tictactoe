@@ -1,6 +1,6 @@
 # Live Preview of Website
 
-[**Live demo**](https://poloa3998.github.io/tictadtoe/)
+[**Live demo**](https://poloa3998.github.io/tictactoe/)
 
 # Calculator
 
