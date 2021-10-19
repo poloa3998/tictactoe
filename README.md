@@ -2,7 +2,7 @@
 
 [**Live demo**](https://poloa3998.github.io/tictactoe/)
 
-# Calculator
+# Tic-Tac-Toe
 
 A project that's meant to create the game tic-tac-toe with basic functionality by using only HTML, CSS, and vanilla JS.
 
