@@ -2,73 +2,126 @@
 //Module for game functionality
 const game = (() => {
     //Factory for player objects
-    const player = (name, mark, turn) => {
-        return { name, mark, turn};
+    const player = (name, mark, turn, winner) => {
+        return { name, mark, turn, winner };
     }
-    const playerOne = player ("player 1", "x", true);
-    const playerTwo = player ("player 2", "o", false)
-    let board = new Array(9).fill(null);
+    const playerOne = player ("player 1", "x", true, false);
+    const playerTwo = player ("player 2", "o", false, false)
+    let board = [0,1,2,3,4,5,6,7,8]
+    
     
     const switchTurns = () => {
         playerOne.turn = !playerOne.turn;
         playerTwo.turn = !playerTwo.turn;
-        console.log(game.playerOne.turn)
-        console.log(game.playerTwo.turn)
+        console.log(minimax(board, playerTwo.mark).index)
+        console.log(board)
+        console.log(draw())
 
     }
-
-    const placeMark = (index) => {
-
+    
+    const placeMark = (i) => {
+        
         if (!draw) {
             return;
         }
-
+        
         if (playerOne.turn === true && playerTwo.turn === false) {
-            board[index] = playerOne.mark;
+            board[i] = playerOne.mark;
         }
         else if (playerOne.turn === false && playerTwo.turn === true) {
-            board[index] = playerTwo.mark;
+            board[i] = playerTwo.mark;
         }
         switchTurns();
     }
-    const checkWin = () => {
-        const winningCombinations = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6]
-        ];
-        for (const combination of winningCombinations) {
-            const [a, b, c] = combination;
-            if (board[a] && (board[a] === board[b] && board[a] === board[c])) {
-                return combination;
-            }
+    const checkWin = (board, player) => {
+        if (
+            (board[0] == player && board[1] == player && board[2] == player) ||
+            (board[3] == player && board[4] == player && board[5] == player) ||
+            (board[6] == player && board[7] == player && board[8] == player) ||
+            (board[0] == player && board[3] == player && board[6] == player) ||
+            (board[1] == player && board[4] == player && board[7] == player) ||
+            (board[2] == player && board[5] == player && board[8] == player) ||
+            (board[0] == player && board[4] == player && board[8] == player) ||
+            (board[2] == player && board[4] == player && board[6] == player)
+            ) {
+            return true;
+            } else {
+            return false;
         }
-
-        return null;
-
     }
-
+    
     const draw = () => {
         return board.every((element) => {
-            return element !== null;
+            if (typeof element !== "number" && checkWin(board,playerOne.mark) || checkWin(board, playerTwo.mark)) {
+                return false;
+            }
+            else if (typeof element !== "number" ) {
+
+                return true;
+            }
         })
     }
     const restartGame = () => {
         playerOne.turn = true
         playerTwo.turn = false
         for (let i = 0; i < board.length; i++) {
-            board[i] = null;
+            board[i] = i;
         }
     }
-  
-    console.log(playerOne.turn)
-    console.log(playerTwo.turn)
+    const emptyBoardIndex = () => {
+        return board.filter(spaces => spaces != playerOne.mark && spaces != playerTwo.mark);
+    }
+    
+    const minimax = (board, player) => {
+        var availSpots = emptyBoardIndex(board);
+        if (checkWin(board, playerOne.mark)) {
+            return { score: -10 };
+        }
+        else if (checkWin(board, playerTwo.mark)) {
+            return {score: 10 };
+        }
+        else if (availSpots.length === 0) {
+            return { score: 0 };
+        }
+        var moves = [];
+        for (var i = 0; i < availSpots.length; i++) {
+            var move = {};
+            move.index = board[availSpots[i]];
+            board[availSpots[i]] = player;
+            if (player == playerTwo.mark) {
+                var result = minimax(board, playerOne.mark);
+                move.score = result.score;
+            }
+            else {
+                var result = minimax(board, playerTwo.mark)
+                move.score = result.score
+            }
+            board[availSpots[i]] = move.index;
+            moves.push(move);
+        }
+        var bestMove;
+        if(player === playerTwo.mark) {
+            var bestScore = -10000;
+            for (var i = 0; i < moves.length; i++) {
+                if (moves[i].score > bestScore) {
+                    bestScore = moves[i].score;
+                    bestMove = i;
+                }
+            }
+        }
+        else {
+            var bestScore = 10000;
+            for (var i = 0; i < moves.length; i++) {
+                if (moves[i].score < bestScore) {
+                    bestScore = moves[i].score;
+                    bestMove = i;
+                }
+            }
+        }
+        return moves[bestMove];
+    }
     return {
+        player,
         playerOne,
         playerTwo,
         switchTurns,
@@ -77,9 +130,12 @@ const game = (() => {
         checkWin,
         draw,
         restartGame,
+        minimax,
     }
 
 })();
+
+
 
 //Module for DOM Display:
 const displayGame = (() => {
@@ -96,7 +152,7 @@ const displayGame = (() => {
         }
         else if (game.playerTwo.turn === true) {
             gameBoard.classList.add(game.playerTwo.mark)
-        } if(game.checkWin() || game.draw()) {
+        } if(game.checkWin(game.board, game.playerOne.mark) || game.checkWin(game.board, game.playerTwo.mark)|| game.draw()) {
             gameBoard.classList.remove(game.playerOne.mark)
             gameBoard.classList.remove(game.playerTwo.mark)
             gameBoard.classList.add(game.playerOne.mark)
@@ -110,12 +166,23 @@ const displayGame = (() => {
         else if (game.draw()) {
             winningScreenText.textContent = "Its a draw!"
         }
-    winningScreen.classList.add("show")
+        winningScreen.classList.add("show");
+    
     }
     const onBoardClick =  (i) => {
         game.placeMark(i)
     }
-
+    const computerClick = () => {
+        test = game.minimax(game.board, game.playerTwo.mark).index
+        if (game.draw()) {
+            return;
+        }
+        else {
+            game.placeMark(test)
+            test = document.querySelector(`.cell[data-index = "${test}"]`)
+            test.classList.add(game.playerTwo.mark)
+        }
+    }
     const startGame = () => {
         setGameBoardHover();
         gridElements.forEach(cell => {
@@ -126,13 +193,19 @@ const displayGame = (() => {
                 else {
                     onBoardClick(cell.dataset.index)
                     cell.classList.add(game.board[cell.dataset.index])
+                    computerClick();
+                    
                     setGameBoardHover();
-                    if (game.checkWin() || game.draw()) {
+                    if (game.checkWin(game.board, game.playerOne.mark) || game.checkWin(game.board, game.playerTwo.mark)|| game.draw()) {
+                        
                         displayWinScreen();
                         setGameBoardHover();
+                        if (game.checkWin(game.board, game.playerOne.mark)) {
+                               
+                            cell.classList.add("winner");
+                        }
                     }
                 }
-                
             }, {once: true })
         });
 
@@ -141,6 +214,7 @@ const displayGame = (() => {
         gridElements.forEach(cell => {
             cell.classList.remove(game.playerOne.mark)
             cell.classList.remove(game.playerTwo.mark)
+            cell.classList.remove("winner");
         });
         winningScreen.classList.remove("show");
         startGame();
@@ -148,7 +222,4 @@ const displayGame = (() => {
     }
     restartButton.addEventListener("click", restartDisplay)
  startGame();
-
-    
-
 })();
