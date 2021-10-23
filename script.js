@@ -144,6 +144,13 @@ const displayGame = (() => {
     const winningScreen = document.querySelector(".winning-screen");
     const winningScreenText = document.querySelector(".winning-screen-text");
     const restartButton = document.querySelector(".winning-screen-button");
+    const titleScreen = document.querySelector(".title-screen")
+    const computerButton = document.querySelector(".computer-btn");
+    const twoPlayerButton = document.querySelector(".two-player-btn")
+    const playerTwoName = document.querySelector(".playerTwo-name")
+    const mainGameArea = document.querySelector(".main-game")
+    const playerInfo = document.querySelector(".player-info")
+    const submitButton = document.querySelector(".submit")
     const setGameBoardHover = () => {
         gameBoard.classList.remove(game.playerOne.mark)
         gameBoard.classList.remove(game.playerTwo.mark)
@@ -183,7 +190,7 @@ const displayGame = (() => {
             test.classList.add(game.playerTwo.mark)
         }
     }
-    const startGame = () => {
+    const startComputerGame = () => {
         setGameBoardHover();
         gridElements.forEach(cell => {
             cell.addEventListener("click", () => {
@@ -208,7 +215,29 @@ const displayGame = (() => {
                 }
             }, {once: true })
         });
-
+    }
+    const startTwoPlayerGame = () => {
+        setGameBoardHover();
+        gridElements.forEach(cell => {
+            cell.addEventListener("click", () => {
+                if (cell.classList.contains(game.playerOne.mark) || cell.classList.contains(game.playerTwo.mark)) {
+                    return;
+                }
+                else {
+                    onBoardClick(cell.dataset.index)
+                    cell.classList.add(game.board[cell.dataset.index])
+                    setGameBoardHover();
+                    if (game.checkWin(game.board, game.playerOne.mark) || game.checkWin(game.board, game.playerTwo.mark)|| game.draw()) {
+                        displayWinScreen();
+                        setGameBoardHover();
+                        if (game.checkWin(game.board, game.playerOne.mark)) {
+                               
+                            cell.classList.add("winner");
+                        }
+                    }
+                }
+            }, {once: true })
+        });
     }
     const restartDisplay = () => {
         gridElements.forEach(cell => {
@@ -217,9 +246,36 @@ const displayGame = (() => {
             cell.classList.remove("winner");
         });
         winningScreen.classList.remove("show");
-        startGame();
+        if (mainGameArea.classList.contains("computer-game")) {
+            startComputerGame();
+        }
+        else {
+            startTwoPlayerGame();
+        }
         game.restartGame();
-    }
+    };
     restartButton.addEventListener("click", restartDisplay)
- startGame();
+    computerButton.addEventListener("click", () => {
+        playerInfo.classList.add("show")
+        titleScreen.style.animationPlayState = "running";
+        mainGameArea.classList.remove("show")
+        submitButton.addEventListener("click", () => {
+            playerInfo.classList.remove("show")
+            mainGameArea.classList.add("show")
+            mainGameArea.classList.add("computer-game")
+            startComputerGame();
+        });
+    });
+    twoPlayerButton.addEventListener("click", () => {
+        titleScreen.style.animationPlayState = "running";
+        playerTwoName.classList.add("show")
+        playerInfo.classList.add("show")
+        mainGameArea.classList.remove("show")
+        submitButton.addEventListener("click", () => {
+            playerInfo.classList.remove("show")
+            mainGameArea.classList.add("two-player-game")
+            mainGameArea.classList.add("show")
+            startTwoPlayerGame();
+        });
+    });
 })();
