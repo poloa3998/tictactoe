@@ -9,7 +9,7 @@ const game = (() => {
     const playerTwo = player ("player 2", "o", false, false)
     let board = [0,1,2,3,4,5,6,7,8]
     
-    
+
     const switchTurns = () => {
         playerOne.turn = !playerOne.turn;
         playerTwo.turn = !playerTwo.turn;
@@ -190,7 +190,7 @@ const displayGame = (() => {
             test.classList.add(game.playerTwo.mark)
         }
     }
-    const startComputerGame = () => {
+    const startGame = () => {
         setGameBoardHover();
         gridElements.forEach(cell => {
             cell.addEventListener("click", () => {
@@ -200,38 +200,20 @@ const displayGame = (() => {
                 else {
                     onBoardClick(cell.dataset.index)
                     cell.classList.add(game.board[cell.dataset.index])
-                    computerClick();
-                    
-                    setGameBoardHover();
+                    if (mainGameArea.classList.contains("two-player-game")) {
+                        setGameBoardHover();
+                    }
+                    else {
+                        computerClick();
+                        setGameBoardHover();
+
+                    }
                     if (game.checkWin(game.board, game.playerOne.mark) || game.checkWin(game.board, game.playerTwo.mark)|| game.draw()) {
                         
                         displayWinScreen();
                         setGameBoardHover();
                         if (game.checkWin(game.board, game.playerOne.mark)) {
-                               
-                            cell.classList.add("winner");
-                        }
-                    }
-                }
-            }, {once: true })
-        });
-    }
-    const startTwoPlayerGame = () => {
-        setGameBoardHover();
-        gridElements.forEach(cell => {
-            cell.addEventListener("click", () => {
-                if (cell.classList.contains(game.playerOne.mark) || cell.classList.contains(game.playerTwo.mark)) {
-                    return;
-                }
-                else {
-                    onBoardClick(cell.dataset.index)
-                    cell.classList.add(game.board[cell.dataset.index])
-                    setGameBoardHover();
-                    if (game.checkWin(game.board, game.playerOne.mark) || game.checkWin(game.board, game.playerTwo.mark)|| game.draw()) {
-                        displayWinScreen();
-                        setGameBoardHover();
-                        if (game.checkWin(game.board, game.playerOne.mark)) {
-                               
+                            
                             cell.classList.add("winner");
                         }
                     }
@@ -246,36 +228,30 @@ const displayGame = (() => {
             cell.classList.remove("winner");
         });
         winningScreen.classList.remove("show");
-        if (mainGameArea.classList.contains("computer-game")) {
-            startComputerGame();
-        }
-        else {
-            startTwoPlayerGame();
-        }
+        startGame();
         game.restartGame();
     };
     restartButton.addEventListener("click", restartDisplay)
     computerButton.addEventListener("click", () => {
+        mainGameArea.classList.remove("two-player-game")
+        mainGameArea.classList.add("computer-game")
+        restartDisplay();
         playerInfo.classList.add("show")
         titleScreen.style.animationPlayState = "running";
         mainGameArea.classList.remove("show")
-        submitButton.addEventListener("click", () => {
-            playerInfo.classList.remove("show")
-            mainGameArea.classList.add("show")
-            mainGameArea.classList.add("computer-game")
-            startComputerGame();
-        });
     });
     twoPlayerButton.addEventListener("click", () => {
+        mainGameArea.classList.remove("computer-game")
+        mainGameArea.classList.add("two-player-game")
+        restartDisplay();
         titleScreen.style.animationPlayState = "running";
         playerTwoName.classList.add("show")
         playerInfo.classList.add("show")
         mainGameArea.classList.remove("show")
-        submitButton.addEventListener("click", () => {
-            playerInfo.classList.remove("show")
-            mainGameArea.classList.add("two-player-game")
-            mainGameArea.classList.add("show")
-            startTwoPlayerGame();
-        });
+    });
+    submitButton.addEventListener("click", () => {
+        playerInfo.classList.remove("show")
+        mainGameArea.classList.add("show")
+        startGame();
     });
 })();
