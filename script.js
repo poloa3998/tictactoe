@@ -182,13 +182,13 @@ const displayGame = (() => {
         game.placeMark(i)
     }
     const computerClick = () => {
-        test = game.minimax(game.board, game.playerTwo.mark).index
+        index = game.minimax(game.board, game.playerTwo.mark).index
         if (game.draw()) {
             return;
         }
         else {
-            game.placeMark(test)
-            test = document.querySelector(`.cell[data-index = "${test}"]`)
+            game.placeMark(index)
+            test = document.querySelector(`.cell[data-index = "${index}"]`)
             test.classList.add(game.playerTwo.mark)
         }
     }
