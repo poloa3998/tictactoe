@@ -7,9 +7,9 @@
 A project that's meant to create the game tic-tac-toe with basic functionality by using only HTML, CSS, and vanilla JS.
 
 ## Description
-This game allows the user to choose between going against the computer or 2 players.
-The computer uses the minimax algorithm, so good luck beating it.
-Allows the user to choose if it wants to go first or second
+* This game allows the user to choose between   going against the computer or 2 players.
+* The computer uses the minimax algorithm, so good luck beating it.
+* Allows the user to choose if it wants to go first or second
 
 
 ## Built with
