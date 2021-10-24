@@ -18,21 +18,25 @@
         <button class = "computer-btn"> 1 Player</button>
         <button class = "two-player-btn">2 Player</button>
     </div>
-    <div class = "player-info">
-        <div class ="playerOne-name">
-            <label for="playerOneName">Player 1:</label> 
-            <input type ="text" placeholder= "Enter Name" required>
+    <form class = "player-info">
+        <div class ="playerOne-info">
+            <label  for="playerOneName">Player 1:</label> 
+            <input class ="player-one-name"type ="text" placeholder= "Enter Name">
+            <div class = "player-One-symbol">
+            </div>
         </div>
-        <div class ="playerTwo-name">
+        <div class ="playerTwo-info">
             <label for="playerTwoName">Player 2: </label> 
-            <input type ="text" placeholder = "Enter Name" required>
+            <input class ="player-two-name"type ="text" placeholder = "Enter Name">
+            <div class = "player-Two-symbol">
+            </div>
         </div>
         <div class = "player-symbols">
             <button class ="x-symbol">X</button>
             <button class ="o-symbol">O</button>
         </div>
-        <button class ="submit">Submit</button>
-    </div>
+        <button class ="submit">Start Game</button>
+    </form>
 </div>
 <div class = "main-game">
     <div class = "gameboard">
