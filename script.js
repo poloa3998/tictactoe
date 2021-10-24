@@ -62,8 +62,6 @@ const game = (() => {
         })
     }
     const restartGame = () => {
-        playerOne.turn = true
-        playerTwo.turn = false
         for (let i = 0; i < board.length; i++) {
             board[i] = i;
         }
@@ -147,10 +145,14 @@ const displayGame = (() => {
     const titleScreen = document.querySelector(".title-screen")
     const computerButton = document.querySelector(".computer-btn");
     const twoPlayerButton = document.querySelector(".two-player-btn")
-    const playerTwoName = document.querySelector(".playerTwo-name")
+    const playerTwoInfo = document.querySelector(".playerTwo-info")
+    const playerOneName = document.querySelector(".player-one-name")
+    const playerTwoName = document.querySelector(".player-two-name")
     const mainGameArea = document.querySelector(".main-game")
     const playerInfo = document.querySelector(".player-info")
     const submitButton = document.querySelector(".submit")
+    const xButton = document.querySelector(".x-symbol")
+    const oButton = document.querySelector(".o-symbol")
     const setGameBoardHover = () => {
         gameBoard.classList.remove(game.playerOne.mark)
         gameBoard.classList.remove(game.playerTwo.mark)
@@ -168,7 +170,7 @@ const displayGame = (() => {
     const displayWinScreen = () => {
 
         if (game.checkWin && !game.draw()) {
-            winningScreenText.textContent = `${game.playerOne.turn ? "O's": "X's"} wins!`
+            winningScreenText.textContent = `${game.playerOne.turn ? game.playerTwo.name: game.playerOne.name} wins!`
         }
         else if (game.draw()) {
             winningScreenText.textContent = "Its a draw!"
@@ -192,6 +194,22 @@ const displayGame = (() => {
     }
     const startGame = () => {
         setGameBoardHover();
+        if(oButton.classList.contains("selected") && !mainGameArea.classList.contains("two-player-game")) {
+            game.playerOne.mark = "o"
+            game.playerOne.turn = false
+            game.playerTwo.mark = "x"
+            game.playerTwo.turn = true
+            computerClick();
+            setGameBoardHover();
+
+        }
+        if(xButton.classList.contains("selected")) {
+            game.playerOne.mark = "x"
+            game.playerTwo.mark = "o"
+            game.playerOne.turn = true
+            game.playerTwo.turn = false
+            setGameBoardHover();
+        }
         gridElements.forEach(cell => {
             cell.addEventListener("click", () => {
                 if (cell.classList.contains(game.playerOne.mark) || cell.classList.contains(game.playerTwo.mark)) {
@@ -228,11 +246,15 @@ const displayGame = (() => {
             cell.classList.remove("winner");
         });
         winningScreen.classList.remove("show");
-        startGame();
         game.restartGame();
+        startGame();
     };
     restartButton.addEventListener("click", restartDisplay)
     computerButton.addEventListener("click", () => {
+        playerOneName.value = ""
+        oButton.classList.remove("selected")
+        xButton.classList.add("selected")
+        playerTwoInfo.classList.remove("show")
         mainGameArea.classList.remove("two-player-game")
         mainGameArea.classList.add("computer-game")
         restartDisplay();
@@ -241,11 +263,13 @@ const displayGame = (() => {
         mainGameArea.classList.remove("show")
     });
     twoPlayerButton.addEventListener("click", () => {
+        oButton.classList.remove("selected")
+        xButton.classList.add("selected")
         mainGameArea.classList.remove("computer-game")
         mainGameArea.classList.add("two-player-game")
         restartDisplay();
         titleScreen.style.animationPlayState = "running";
-        playerTwoName.classList.add("show")
+        playerTwoInfo.classList.add("show")
         playerInfo.classList.add("show")
         mainGameArea.classList.remove("show")
     });
@@ -254,4 +278,44 @@ const displayGame = (() => {
         mainGameArea.classList.add("show")
         startGame();
     });
+    playerInfo.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (playerOneName.value.length == 0) {
+            game.playerOne.name = "Player 1"
+        }
+        else {
+            game.playerOne.name = playerOneName.value
+            
+        }
+        if (mainGameArea.classList.contains("two-player-game")) {
+            if (playerTwoName.value.length == 0) {
+                game.playerTwo.name = "Player 2"
+            }
+            else {
+
+                game.playerTwo.name = playerTwoName.value
+            }
+
+        }
+        else {
+            game.playerTwo.name = "Computer"
+        }
+    })
+    xButton.addEventListener ("click", () => {
+        xButton.classList.add("selected")
+        oButton.classList.remove("selected")
+        game.playerOne.mark = "x"
+        game.playerTwo.mark = "o"
+        game.playerOne.turn = true
+        game.playerTwo.turn = false
+
+    })
+    oButton.addEventListener ("click", () => {
+        oButton.classList.add("selected")
+        xButton.classList.remove("selected")
+        game.playerOne.mark = "o"
+        game.playerOne.turn = false
+        game.playerTwo.mark = "x"
+        game.playerTwo.turn = true
+    })
 })();
