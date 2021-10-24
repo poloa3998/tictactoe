@@ -61,15 +61,17 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 6vw;
-    padding: 50px;
+    gap: 1vw;
+    padding: 30px;
 }
-.playerTwo-name {
+.playerTwo-info {
     display: none;
 }
-.playerOne-name,
-.playerTwo-name.show {
+.playerOne-info,
+.playerTwo-info.show {
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
     gap: 10px;
 }
@@ -96,9 +98,17 @@ input[type="text"] {
     background-color: #FF3B3F;
     
 }
+.x-symbol.selected {
+    color: #FF3B3F;
+    background-color: white;
+}
 .o-symbol {
     color: white;
     background-color: #40dcff;
+}
+.o-symbol.selected {
+    color: #40dcff;
+    background-color: white;
 }
 .submit {
     height: 5vh;
